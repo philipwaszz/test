@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request
 import random
 
-app = Flask(__name__, template_folder='../templates')
+import os
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '../templates'))
 
 # 模拟数据获取函数
 def get_product_data(product_name):
