@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品市场潜力分析结果</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            flex: 1;
+            padding: 40px 0;
+        }
+        h1 {
+            color: #343a40;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .potential-high {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .potential-medium {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .potential-low {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .potential-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .data-row {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+        .data-value {
+            font-weight: 600;
+            color: #343a40;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>商品市场潜力分析结果</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        商品信息
+                    </div>
+                    <div class="card-body">
+                        <div class="data-row">
+                            <span class="data-label">商品名称:</span>
+                            <span class="data-value">{{ product_data.product_name }}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">价格:</span>
+                            <span class="data-value">¥{{ product_data.price }}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">评价数量:</span>
+                            <span class="data-value">{{ product_data.reviews }}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">评分:</span>
+                            <span class="data-value">{{ product_data.rating }}/5.0</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">库存状态:</span>
+                            <span class="data-value">{{ product_data.availability }}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">卖家:</span>
+                            <span class="data-value">{{ product_data.seller }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        市场潜力分析
+                    </div>
+                    <div class="card-body">
+                        <h3 class="mb-4">市场潜力等级:</h3>
+                        {% if market_potential == '高' %}
+                        <span class="potential-badge potential-high">高</span>
+                        <p class="mt-4">该商品具有较高的市场潜力，建议考虑进一步投资或推广。</p>
+                        {% elif market_potential == '中' %}
+                        <span class="potential-badge potential-medium">中</span>
+                        <p class="mt-4">该商品具有中等市场潜力，可以考虑适度投资。</p>
+                        {% else %}
+                        <span class="potential-badge potential-low">低</span>
+                        <p class="mt-4">该商品市场潜力较低，建议谨慎考虑投资。</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- AI深度分析按钮 -->
+                <div class="text-center mt-4">
+                    <form action="/ai-analysis" method="POST">
+                        <input type="hidden" name="product_name" value="{{ product_data.product_name }}">
+                        <button type="submit" class="btn btn-primary btn-lg">AI 深度分析</button>
+                    </form>
+                </div>
+                
+                <!-- AI分析结果 -->
+                {% if ai_suggestion %}
+                <div class="card mt-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        AI 跨境代购套利建议
+                    </div>
+                    <div class="card-body">
+                        <p>{{ ai_suggestion }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- 付费解锁详细报告按钮 -->
+                <div class="text-center mt-6">
+                    <button type="button" class="btn btn-warning btn-lg" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                        付费解锁详细报告
+                    </button>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary btn-back">返回搜索</a>
+                </div>
+                
+                <!-- 二维码收款模态框 -->
+                <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="paymentModalLabel">付费解锁详细报告</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p class="mb-4">详细报告价格：<strong>¥99</strong></p>
+                                <div class="mb-4">
+                                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=QR%20code%20for%20payment%2C%20black%20and%20white%2C%20clear%20and%20sharp&image_size=square_hd" alt="收款二维码" style="width: 200px; height: 200px;">
+                                </div>
+                                <p>请扫描二维码支付，支付后将自动解锁详细报告</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">已支付</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>© 2026 商品市场潜力分析工具</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
